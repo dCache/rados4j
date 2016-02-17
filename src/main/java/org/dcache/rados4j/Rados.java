@@ -45,6 +45,29 @@ public class Rados {
         checkError(rc, "Failed to connect to cluster");
     }
 
+    public void shutdown() throws RadosException {
+        int rc = libRados.rados_shutdown(_cluster);
+        checkError(rc, "Failed to shutdown rados");
+    }
+
+    public void createPool(String poolName) throws RadosException {
+        int rc = libRados.rados_pool_create(_cluster, poolName);
+        checkError(rc, "Failed to create pool " + poolName);
+    }
+
+    public void deletePool(String poolName) throws RadosException {
+        int rc = libRados.rados_pool_delete(_cluster, poolName);
+        checkError(rc, "Failed to delete pool " + poolName);
+    }
+
+    public IoCtx createIoContext(String poolName) throws RadosException {
+        PointerByReference ctxPtr = new PointerByReference();
+        int rc = libRados.rados_ioctx_create(_cluster, poolName, ctxPtr);
+        checkError(rc, "Failed to create IO context for pool " + poolName);
+        return new IoCtx(ctxPtr.getValue(), libRados);
+    }
+
+
     private void checkError(int rc, String msg) throws RadosException {
         if (rc < 0) {
             int errno = runtime.getLastError();
@@ -55,8 +78,17 @@ public class Rados {
 
     @SuppressWarnings("PublicInnerClass")
     public interface LibRados {
+
       int rados_create(@Out PointerByReference cluster, @In String id);
       int rados_conf_read_file(@In Pointer cluster, @In String config);
       int rados_connect(@In Pointer cluster);
+      int rados_shutdown(@In Pointer cluster);
+
+      int rados_pool_create(@In Pointer cluster, @In String poolName);
+      int rados_pool_delete(@In Pointer cluster, @In String poolName);
+
+      int rados_ioctx_create(@In Pointer cluster, @In String poolName, @Out PointerByReference ctx);
+      int rados_ioctx_destroy(@In Pointer ctx);
+
     }
 }
