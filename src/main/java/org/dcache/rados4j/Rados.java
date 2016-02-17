@@ -2,6 +2,7 @@ package org.dcache.rados4j;
 
 import jnr.ffi.Pointer;
 import jnr.ffi.annotations.*;
+import jnr.ffi.byref.IntByReference;
 import jnr.ffi.byref.PointerByReference;
 import jnr.ffi.provider.FFIProvider;
 
@@ -38,6 +39,16 @@ public class Rados {
         _cluster = clusterPtr.getValue();
         rc = libRados.rados_conf_read_file(_cluster, configFile);
         checkError(rc, "Failed to read config file");
+        LOG.info("Using Librados version {}", version());
+    }
+
+    public String version() throws RadosException {
+        IntByReference maj = new IntByReference();
+        IntByReference min = new IntByReference();
+        IntByReference extra = new IntByReference();
+        int rc = libRados.rados_version(maj, min, extra);
+        checkError(rc, "Failed to get version number");
+        return maj.intValue() + "." + min.intValue() + "." + extra.intValue();
     }
 
     public void connect() throws RadosException {
@@ -79,6 +90,7 @@ public class Rados {
     @SuppressWarnings("PublicInnerClass")
     public interface LibRados {
 
+      int rados_version(@Out IntByReference maj, @Out IntByReference min, @Out IntByReference extra);
       int rados_create(@Out PointerByReference cluster, @In String id);
       int rados_conf_read_file(@In Pointer cluster, @In String config);
       int rados_connect(@In Pointer cluster);
