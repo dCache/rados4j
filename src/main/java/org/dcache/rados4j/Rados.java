@@ -39,7 +39,7 @@ public class Rados {
         cluster = clusterPtr.getValue();
         rc = libRados.rados_conf_read_file(cluster, configFile);
         checkError(rc, "Failed to read config file");
-        LOG.info("Using Librados version {}", version());
+        LOG.info("Using RADOS version {}", version());
     }
 
     public String version() throws RadosException {

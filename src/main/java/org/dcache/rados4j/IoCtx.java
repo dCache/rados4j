@@ -16,4 +16,8 @@ public class IoCtx {
         int rc = rados.rados_ioctx_destroy(ctx);
     }
 
+    public Rbd createRbd() throws RadosException {
+        return new Rbd(ctx);
+    }
+
 }

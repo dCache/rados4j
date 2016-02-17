@@ -48,5 +48,13 @@ public class RadosTest {
         IoCtx ctx = rados.createIoContext("test-pool");
         rados.deletePool("test-pool");
     }
+
+    @Test
+    public void testContextCreateRbd() throws RadosException {
+        rados.createPool("test-pool");
+        IoCtx ctx = rados.createIoContext("test-pool");
+        Rbd rbd = ctx.createRbd();
+        rados.deletePool("test-pool");
+    }
 }
 
