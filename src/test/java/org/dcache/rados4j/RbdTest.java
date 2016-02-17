@@ -1,5 +1,6 @@
 package org.dcache.rados4j;
 
+import java.util.Random;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.Before;
@@ -61,6 +62,33 @@ public class RbdTest {
         rbd.create("test-image", 0);
         RbdImage image = rbd.openReadOnly("test-image");
         image.close();
+        rbd.remove("test-image");
+    }
+
+    @Test
+    public void testWriteImage() throws RadosException {
+        rbd.create("test-image", 0);
+        try (RbdImage image = rbd.open("test-image") ) {
+            byte[] data = new byte[1024];
+            new Random().nextBytes(data);
+
+            for(int i = 0; i < 1024; i++) {
+                image.write(data, i*1024L, data.length);
+            }
+        }
+
+        rbd.remove("test-image");
+    }
+
+    @Test
+    public void testReadImage() throws RadosException {
+        rbd.create("test-image", 0);
+        try (RbdImage image = rbd.open("test-image")) {
+            byte[] data = new byte[1024];
+            int n = image.read(data, 0L, data.length);
+            System.out.println(n);
+        }
+
         rbd.remove("test-image");
     }
 }

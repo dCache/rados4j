@@ -23,4 +23,15 @@ public class RbdImage implements AutoCloseable {
         int rc = rbd.rbd_close(image);
         checkError(runtime, rc, "Failed to close image " + name);
     }
+
+    public void write(byte[] data, long offset, int length) throws RadosException {
+        int rc = rbd.rbd_write(image, offset, length, data);
+        checkError(runtime, rc, "Failed to write into image " + name);
+    }
+
+    public int read(byte[] data, long offset, int length) throws RadosException {
+        int rc = rbd.rbd_read(image, offset, length, data);
+        checkError(runtime, rc, "Failed to read from image " + name);
+        return rc;
+    }
 }

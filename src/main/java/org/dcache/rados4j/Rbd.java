@@ -47,15 +47,15 @@ public class Rbd {
 
     public RbdImage open(String name) throws RadosException {
         PointerByReference imagePtr = new PointerByReference();
-        int rc = libRbd.rbd_open(ctx, name, imagePtr, "");
+        int rc = libRbd.rbd_open(ctx, name, imagePtr, null);
         checkError(runtime, rc, "Failed to open image " + name);
         return new RbdImage(imagePtr.getValue(), name, libRbd, runtime);
     }
 
     public RbdImage openReadOnly(String name) throws RadosException {
         PointerByReference imagePtr = new PointerByReference();
-        int rc = libRbd.rbd_open_read_only(ctx, name, imagePtr, "");
-        checkError(runtime, rc, "Failed to open image " + name);
+        int rc = libRbd.rbd_open_read_only(ctx, name, imagePtr, null);
+        checkError(runtime, rc, "Failed to (ro)open image " + name);
         return new RbdImage(imagePtr.getValue(), name, libRbd, runtime);
     }
 
@@ -72,5 +72,7 @@ public class Rbd {
         int rbd_open_read_only(@In Pointer ctx, @In String name, @Out PointerByReference image, @In String snap_name);
         int rbd_close(@In Pointer image);
         int rbd_remove(@In Pointer ctx, @In String name);
+        int rbd_write(@In Pointer image, long offset, int len, @In byte[] buf);
+        int rbd_read(@In Pointer image, long offset, int len, @Out byte[] buf);
     }
 }
