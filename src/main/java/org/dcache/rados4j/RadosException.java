@@ -5,7 +5,13 @@ import java.io.IOException;
 
 public class RadosException extends IOException {
 
-    RadosException(String string) {
+    private final int rc;
+    RadosException(String string, int rc) {
         super(string);
+        this.rc = rc;
+    }
+
+    public int getErrorCode() {
+        return rc;
     }
 }

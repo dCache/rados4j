@@ -15,7 +15,7 @@ public class Error {
             throw new RadosException(
                     String.format("%s : %s(%d), sys: %s(%d)",
                             msg, e.name(), e.intValue(),
-                            se.name(), se.intValue()));
+                            se.name(), se.intValue()), rc);
         }
     }
 }
