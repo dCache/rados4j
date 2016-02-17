@@ -4,7 +4,7 @@ import jnr.ffi.Pointer;
 
 import static org.dcache.rados4j.Error.checkError;
 
-public class RbdImage {
+public class RbdImage implements AutoCloseable {
 
     private final Pointer image;
     private final Rbd.LibRbd rbd;
@@ -18,6 +18,7 @@ public class RbdImage {
         this.name = name;
     }
 
+    @Override
     public void close() throws RadosException {
         int rc = rbd.rbd_close(image);
         checkError(runtime, rc, "Failed to close image " + name);
