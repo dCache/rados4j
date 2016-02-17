@@ -9,6 +9,8 @@ import jnr.ffi.provider.FFIProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.dcache.rados4j.Error.checkError;
+
 public class Rados {
 
     private final Logger LOG = LoggerFactory.getLogger(Rados.class);
@@ -34,11 +36,11 @@ public class Rados {
 
         int rc;
         rc = libRados.rados_create(clusterPtr, id);
-        checkError(rc, "Failed to create cluster");
+        checkError(runtime, rc, "Failed to create cluster");
 
         cluster = clusterPtr.getValue();
         rc = libRados.rados_conf_read_file(cluster, configFile);
-        checkError(rc, "Failed to read config file");
+        checkError(runtime, rc, "Failed to read config file");
         LOG.info("Using RADOS version {}", version());
     }
 
@@ -47,44 +49,35 @@ public class Rados {
         IntByReference min = new IntByReference();
         IntByReference extra = new IntByReference();
         int rc = libRados.rados_version(maj, min, extra);
-        checkError(rc, "Failed to get version number");
+        checkError(runtime, rc, "Failed to get version number");
         return maj.intValue() + "." + min.intValue() + "." + extra.intValue();
     }
 
     public void connect() throws RadosException {
         int rc = libRados.rados_connect(cluster);
-        checkError(rc, "Failed to connect to cluster");
+        checkError(runtime, rc, "Failed to connect to cluster");
     }
 
     public void shutdown() throws RadosException {
         int rc = libRados.rados_shutdown(cluster);
-        checkError(rc, "Failed to shutdown rados");
+        checkError(runtime, rc, "Failed to shutdown rados");
     }
 
     public void createPool(String poolName) throws RadosException {
         int rc = libRados.rados_pool_create(cluster, poolName);
-        checkError(rc, "Failed to create pool " + poolName);
+        checkError(runtime, rc, "Failed to create pool " + poolName);
     }
 
     public void deletePool(String poolName) throws RadosException {
         int rc = libRados.rados_pool_delete(cluster, poolName);
-        checkError(rc, "Failed to delete pool " + poolName);
+        checkError(runtime, rc, "Failed to delete pool " + poolName);
     }
 
     public IoCtx createIoContext(String poolName) throws RadosException {
         PointerByReference ctxPtr = new PointerByReference();
         int rc = libRados.rados_ioctx_create(cluster, poolName, ctxPtr);
-        checkError(rc, "Failed to create IO context for pool " + poolName);
-        return new IoCtx(ctxPtr.getValue(), libRados);
-    }
-
-
-    private void checkError(int rc, String msg) throws RadosException {
-        if (rc < 0) {
-            int errno = runtime.getLastError();
-            LOG.error("{} : {}, errno {}", msg, rc, errno);
-            throw new RadosException( msg + ": " + rc + " errno " + errno);
-        }
+        checkError(runtime, rc, "Failed to create IO context for pool " + poolName);
+        return new IoCtx(ctxPtr.getValue(), libRados, runtime);
     }
 
     @SuppressWarnings("PublicInnerClass")
