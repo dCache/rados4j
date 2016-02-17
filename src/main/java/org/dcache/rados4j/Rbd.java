@@ -74,5 +74,6 @@ public class Rbd {
         int rbd_remove(@In Pointer ctx, @In String name);
         int rbd_write(@In Pointer image, long offset, int len, @In byte[] buf);
         int rbd_read(@In Pointer image, long offset, int len, @Out byte[] buf);
+        int rbd_stat(@In Pointer image, @Out RbdImageInfo info, long size);
     }
 }
