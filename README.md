@@ -1,7 +1,6 @@
 RADOS4J
 =======
-
-A Java binding for librados and librbd
+A Java binding for librados and librbd (an alternative to https://github.com/ceph/rados-java)
 
 
 Testing
