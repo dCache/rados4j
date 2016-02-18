@@ -1,5 +1,6 @@
 package org.dcache.rados4j;
 
+import java.nio.ByteBuffer;
 import jnr.ffi.Pointer;
 
 import static org.dcache.rados4j.Error.checkError;
@@ -33,6 +34,11 @@ public class RbdImage implements AutoCloseable {
         int rc = rbd.rbd_read(image, offset, length, data);
         checkError(runtime, rc, "Failed to read from image " + name);
         return rc;
+    }
+
+    public void resize(long newSize) throws RadosException {
+        int rc = rbd.rbd_resize(image, newSize);
+        checkError(runtime, rc, "Failed to resize image " + name);
     }
 
     public RbdImageInfo stat() throws RadosException {

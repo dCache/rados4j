@@ -1,5 +1,6 @@
 package org.dcache.rados4j;
 
+import java.nio.Buffer;
 import jnr.ffi.Pointer;
 import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
@@ -75,5 +76,6 @@ public class Rbd {
         int rbd_write(@In Pointer image, long offset, int len, @In byte[] buf);
         int rbd_read(@In Pointer image, long offset, int len, @Out byte[] buf);
         int rbd_stat(@In Pointer image, @Out RbdImageInfo info, long size);
+        int rbd_resize(@In Pointer image, long size);
     }
 }
