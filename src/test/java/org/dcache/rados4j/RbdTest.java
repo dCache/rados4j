@@ -69,11 +69,14 @@ public class RbdTest {
     public void testWriteImage() throws RadosException {
         rbd.create("test-image", 0);
         try (RbdImage image = rbd.open("test-image") ) {
-            byte[] data = new byte[1024];
+            int n = 1024;
+            int bufSize = 1024;
+            byte[] data = new byte[bufSize];
             new Random().nextBytes(data);
 
-            for(int i = 0; i < 1024; i++) {
-                image.write(data, i*1024L, data.length);
+            image.resize(bufSize*n);
+            for(int i = 0; i < n; i++) {
+                image.write(data, i*bufSize, data.length);
             }
         }
 
@@ -85,8 +88,8 @@ public class RbdTest {
         rbd.create("test-image", 0);
         try (RbdImage image = rbd.open("test-image")) {
             byte[] data = new byte[1024];
+            image.resize(1024);
             int n = image.read(data, 0L, data.length);
-            System.out.println(n);
         }
 
         rbd.remove("test-image");
