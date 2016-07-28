@@ -25,4 +25,7 @@ public class IoCtx {
         return new Rbd(ctx);
     }
 
+    Pointer pointer() {
+        return ctx;
+    }
 }

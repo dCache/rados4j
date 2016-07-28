@@ -80,6 +80,13 @@ public class Rados {
         return new IoCtx(ctxPtr.getValue(), libRados, runtime);
     }
 
+    public RadosPoolInfo statPool(IoCtx ctx) throws RadosException {
+        RadosPoolInfo poolInfo = new RadosPoolInfo(runtime);
+        int rc = libRados.rados_ioctx_pool_stat(ctx.pointer(), poolInfo);
+        checkError(runtime, rc, "Failed to get pool status");
+        return poolInfo;
+    }
+
     @SuppressWarnings("PublicInnerClass")
     public interface LibRados {
 
@@ -92,6 +99,7 @@ public class Rados {
       int rados_pool_create(@In Pointer cluster, @In String poolName);
       int rados_pool_delete(@In Pointer cluster, @In String poolName);
 
+      int rados_ioctx_pool_stat(@In Pointer ctx, @Out RadosPoolInfo poolInfo);
       int rados_ioctx_create(@In Pointer cluster, @In String poolName, @Out PointerByReference ctx);
       int rados_ioctx_destroy(@In Pointer ctx);
 

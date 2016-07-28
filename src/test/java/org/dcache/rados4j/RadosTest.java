@@ -37,6 +37,15 @@ public class RadosTest {
     }
 
     @Test
+    public void testGetPoolInfo() throws RadosException {
+        rados.createPool("test-pool");
+        IoCtx ctx = rados.createIoContext("test-pool");
+        RadosPoolInfo info = rados.statPool(ctx);
+        System.out.println(info);
+        rados.deletePool("test-pool");
+    }
+
+    @Test
     public void testCreatePool() throws RadosException {
         rados.createPool("test-pool");
         rados.deletePool("test-pool");
