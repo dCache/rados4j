@@ -1,6 +1,9 @@
 package org.dcache.rados4j;
 
-import java.nio.Buffer;
+import java.nio.charset.StandardCharsets;
+import java.util.HashSet;
+import java.util.Set;
+
 import jnr.ffi.Pointer;
 import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
@@ -65,6 +68,43 @@ public class Rbd {
         checkError(runtime, rc, "Failed to remove image " + name);
     }
 
+    public Set<String> list() throws RadosException {
+
+        IntByReference size = new IntByReference(1); // initial buffer size
+        byte[] names;
+
+        int rc;
+        do {
+            names = new byte[size.intValue()];
+            rc = libRbd.rbd_list(ctx, names, size);
+            checkError(runtime, rc, "Failed to get list of RBD images");
+
+            /*
+             * on success, rc cotains size required to store the names
+             * try wirh a bigger array, if needed
+             */
+            if (rc > names.length) {
+                LOG.debug("Bigger array required to get the listing: {}", rc);
+                size = new IntByReference(rc);
+            }
+
+        } while (rc > names.length);
+
+        /*
+         * returned byte array contains image names separated by '\0'
+         */
+        Set<String> dirList = new HashSet<>();
+        int o = 0;
+        int i  = 0;
+        for( ; i < rc; i++) {
+            if (names[i] == '\0') {
+                dirList.add(new String(names, o, i - o,  StandardCharsets.UTF_8));
+                o = i + 1;
+            }
+        }
+        return dirList;
+    }
+
     @SuppressWarnings("PublicInnerClass")
     public interface LibRbd {
         int rbd_version(@Out IntByReference maj, @Out IntByReference min, @Out IntByReference extra);
@@ -77,5 +117,6 @@ public class Rbd {
         int rbd_read(@In Pointer image, long offset, int len, @Out byte[] buf);
         int rbd_stat(@In Pointer image, @Out RbdImageInfo info, long size);
         int rbd_resize(@In Pointer image, long size);
+        int rbd_list(@In Pointer ctx, @Out byte[] names, @Out IntByReference size);
     }
 }

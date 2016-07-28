@@ -1,9 +1,12 @@
 package org.dcache.rados4j;
 
 import java.util.Random;
+import java.util.Set;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.Before;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -33,6 +36,11 @@ public class RbdTest {
 
         rados = new Rados(id, configFile);
         rados.connect();
+        try {
+            rados.deletePool(testPool);
+        } catch (RadosException e) {
+            // NOP
+        }
         rados.createPool(testPool);
         rbd = rados.createIoContext(testPool).createRbd();
     }
@@ -93,5 +101,20 @@ public class RbdTest {
         }
 
         rbd.remove("test-image");
+    }
+
+    @Test
+    public void testListImages() throws RadosException {
+        rbd.create("test-image1", 0);
+        rbd.create("test-image2", 0);
+
+        Set<String> list = rbd.list();
+
+        assertEquals(2, list.size());
+        assertTrue(list.contains("test-image1"));
+        assertTrue(list.contains("test-image2"));
+
+        rbd.remove("test-image1");
+        rbd.remove("test-image2");
     }
 }
