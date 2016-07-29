@@ -4,10 +4,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
+import jnr.constants.platform.Errno;
 import jnr.ffi.Pointer;
 import jnr.ffi.annotations.In;
 import jnr.ffi.annotations.Out;
 import jnr.ffi.byref.IntByReference;
+import jnr.ffi.byref.LongLongByReference;
 import jnr.ffi.byref.PointerByReference;
 import jnr.ffi.provider.FFIProvider;
 import org.slf4j.Logger;
@@ -70,28 +72,30 @@ public class Rbd {
 
     public Set<String> list() throws RadosException {
 
-        IntByReference size = new IntByReference(1); // initial buffer size
+        LongLongByReference size = new LongLongByReference(1024); // initial buffer size
         byte[] names;
 
         int rc;
-        do {
+        while(true) {
             names = new byte[size.intValue()];
             rc = libRbd.rbd_list(ctx, names, size);
-            checkError(runtime, rc, "Failed to get list of RBD images");
-
-            /*
-             * on success, rc cotains size required to store the names
-             * try wirh a bigger array, if needed
-             */
-            if (rc > names.length) {
-                LOG.debug("Bigger array required to get the listing: {}", rc);
-                size = new IntByReference(rc);
+            if (rc == -Errno.ERANGE.intValue()) {
+                // provided byte array is smaller than listing size
+                LOG.debug("Bigger array required to get the listing: {}", size.intValue());
+                continue;
             }
 
-        } while (rc > names.length);
+            if (rc >=0) {
+                break;
+            }
+
+            checkError(runtime, rc, "Failed to get list of RBD images");
+            throw new RuntimeException("must never get here");
+        }
 
         /*
-         * returned byte array contains image names separated by '\0'
+         * returned byte array contains image names separated by '\0'.
+         * the value of rc points to actual size used in the array.
          */
         Set<String> dirList = new HashSet<>();
         int o = 0;
@@ -117,6 +121,6 @@ public class Rbd {
         int rbd_read(@In Pointer image, long offset, int len, @Out byte[] buf);
         int rbd_stat(@In Pointer image, @Out RbdImageInfo info, long size);
         int rbd_resize(@In Pointer image, long size);
-        int rbd_list(@In Pointer ctx, @Out byte[] names, @Out IntByReference size);
+        int rbd_list(@In Pointer ctx, @In @Out byte[] names, @In @Out LongLongByReference size);
     }
 }
