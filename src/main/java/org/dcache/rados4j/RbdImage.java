@@ -1,6 +1,5 @@
 package org.dcache.rados4j;
 
-import java.nio.ByteBuffer;
 import jnr.ffi.Pointer;
 
 import static org.dcache.rados4j.Error.checkError;
