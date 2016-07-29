@@ -5,6 +5,9 @@
     <artifactId>rados4j</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <name>librados and librbd bindings for Java</name>
+    <description>Java interface to CEPH</description>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
