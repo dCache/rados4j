@@ -2,13 +2,13 @@ RADOS4J
 =======
 A Java binding for librados and librbd (an alternative to https://github.com/ceph/rados-java)
 
-
 Testing
 -------
-The unit tests require running CEPH instance. You can use [all-in-one](https://gist.github.com/kofemann/796c1f07f87adc1eb8e3)
-instance for that. There are three environment variables to point test to your
+The unit tests require a running CEPH instance. A [ceph/demp](https://github.com/ceph/ceph-docker/tree/master/ceph-releases/jewel/ubuntu/14.04/demo)
+docker container is a great way to deploy a test instance. There are three environment variables to point test to your
 installation: **RADOS_TEST_CLUSTER**, **RADOS_TEST_CONF**, **RADOS_TEST_POOL**, with
 **admin**, **/etc/ceph/ceph.conf** and **test-pool** as default values.
+
 License:
 --------
 
