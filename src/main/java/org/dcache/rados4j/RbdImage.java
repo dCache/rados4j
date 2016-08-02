@@ -1,5 +1,6 @@
 package org.dcache.rados4j;
 
+import java.nio.ByteBuffer;
 import jnr.ffi.Pointer;
 
 import static org.dcache.rados4j.Error.checkError;
@@ -24,14 +25,27 @@ public class RbdImage implements AutoCloseable {
         checkError(runtime, rc, "Failed to close image " + name);
     }
 
-    public void write(byte[] data, long offset, int length) throws RadosException {
-        int rc = rbd.rbd_write(image, offset, length, data);
-        checkError(runtime, rc, "Failed to write into image " + name);
+    public int write(byte[] data, long offset, int length) throws RadosException {
+        return this.write(ByteBuffer.wrap(data), offset);
     }
 
     public int read(byte[] data, long offset, int length) throws RadosException {
-        int rc = rbd.rbd_read(image, offset, length, data);
+        return this.read(ByteBuffer.wrap(data), offset);
+    }
+
+    public int write(ByteBuffer buf, long offset) throws RadosException {
+        int rc = rbd.rbd_write(image, offset, buf.remaining(), buf);
+        checkError(runtime, rc, "Failed to write into image " + name);
+        // JNI interface does not updates the position
+        buf.position( buf.position() + rc);
+        return rc;
+    }
+
+    public int read(ByteBuffer buf, long offset) throws RadosException {
+        int rc = rbd.rbd_read(image, offset, buf.remaining(), buf);
         checkError(runtime, rc, "Failed to read from image " + name);
+        // JNI interface does not updates the position
+        buf.position( buf.position() + rc);
         return rc;
     }
 

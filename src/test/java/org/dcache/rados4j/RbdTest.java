@@ -1,5 +1,8 @@
 package org.dcache.rados4j;
 
+import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Random;
 import java.util.Set;
 import org.junit.After;
@@ -98,6 +101,39 @@ public class RbdTest {
             byte[] data = new byte[1024];
             image.resize(1024);
             int n = image.read(data, 0L, data.length);
+        }
+
+        rbd.remove("test-image");
+    }
+
+    @Test
+    public void testWriteReadImage() throws RadosException, NoSuchAlgorithmException {
+        rbd.create("test-image", 0);
+        try (RbdImage image = rbd.open("test-image")) {
+
+            int n = 1024;
+            int bufSize = 1024;
+
+            MessageDigest mdIn = MessageDigest.getInstance("SHA1");
+            MessageDigest mdOut = MessageDigest.getInstance("SHA1");
+
+            byte[] dataIn = new byte[bufSize];
+            new Random().nextBytes(dataIn);
+
+            image.resize(bufSize * n);
+            for (int i = 0; i < n; i++) {
+                ByteBuffer b = ByteBuffer.wrap(dataIn);
+                mdIn.update(dataIn);
+                image.write(b, i * bufSize);
+            }
+            for (int i = 0; i < n * 2; i++) {
+                ByteBuffer b = ByteBuffer.allocateDirect(bufSize / 2);
+                b.limit(b.capacity());
+                image.read(b, i * bufSize / 2);
+                mdOut.update(b);
+            }
+
+            assertArrayEquals(mdIn.digest(), mdOut.digest());
         }
 
         rbd.remove("test-image");

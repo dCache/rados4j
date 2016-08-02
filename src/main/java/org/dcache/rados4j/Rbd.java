@@ -1,5 +1,6 @@
 package org.dcache.rados4j;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
@@ -117,8 +118,8 @@ public class Rbd {
         int rbd_open_read_only(@In Pointer ctx, @In String name, @Out PointerByReference image, @In String snap_name);
         int rbd_close(@In Pointer image);
         int rbd_remove(@In Pointer ctx, @In String name);
-        int rbd_write(@In Pointer image, long offset, int len, @In byte[] buf);
-        int rbd_read(@In Pointer image, long offset, int len, @Out byte[] buf);
+        int rbd_write(@In Pointer image, long offset, int len, @In ByteBuffer buf);
+        int rbd_read(@In Pointer image, long offset, int len, @Out ByteBuffer buf);
         int rbd_stat(@In Pointer image, @Out RbdImageInfo info, long size);
         int rbd_resize(@In Pointer image, long size);
         int rbd_list(@In Pointer ctx, @In @Out byte[] names, @In @Out LongLongByReference size);
