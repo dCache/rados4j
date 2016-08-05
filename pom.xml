@@ -49,10 +49,19 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <repositories>
+
+    <!--
+                 MAVEN DEPLOYMENT REPOSITORY
+    -->
+    <distributionManagement>
         <repository>
-            <id>dcache.repository</id>
-            <url>https://download.dcache.org/nexus/content/groups/public</url>
+            <id>dcache.org</id>
+            <url>https://download.dcache.org/nexus/content/repositories/releases</url>
         </repository>
-    </repositories>
+        <snapshotRepository>
+            <id>dcache.org-snapshot</id>
+            <url>https://download.dcache.org/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
