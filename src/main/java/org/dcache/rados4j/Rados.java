@@ -87,6 +87,13 @@ public class Rados {
         return poolInfo;
     }
 
+    public RadosClusterInfo statCluster() throws RadosException {
+        RadosClusterInfo clusterInfo = new RadosClusterInfo(runtime);
+        int rc = libRados.rados_cluster_stat(cluster, clusterInfo);
+        checkError(runtime, rc, "Failed to get cluster status");
+        return clusterInfo;
+    }
+
     @SuppressWarnings("PublicInnerClass")
     public interface LibRados {
 
@@ -95,6 +102,7 @@ public class Rados {
       int rados_conf_read_file(@In Pointer cluster, @In String config);
       int rados_connect(@In Pointer cluster);
       int rados_shutdown(@In Pointer cluster);
+      int rados_cluster_stat(@In Pointer cluster, @Out RadosClusterInfo clusterInfo);
 
       int rados_pool_create(@In Pointer cluster, @In String poolName);
       int rados_pool_delete(@In Pointer cluster, @In String poolName);
