@@ -111,5 +111,8 @@ public class Rados {
       int rados_ioctx_create(@In Pointer cluster, @In String poolName, @Out PointerByReference ctx);
       int rados_ioctx_destroy(@In Pointer ctx);
 
+      int rados_getxattr(@In Pointer ctx, @In String obj, @In String attr, @Out byte[] buf, long len);
+      int rados_setxattr(@In Pointer ctx, @In String obj, @In String attr, @In byte[] buf, long len);
+      int rados_rmxattr(@In Pointer ctx, @In String obj, @In String attr);
     }
 }
