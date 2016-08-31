@@ -64,4 +64,11 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <scm>
+        <url>https://github.com/dCache/rados4j</url>
+        <connection>scm:git:https://github.com/dCache/rados4j.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/dCache/rados4j.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
 </project>
