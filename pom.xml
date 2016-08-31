@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.dcache</groupId>
     <artifactId>rados4j</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>librados and librbd bindings for Java</name>
     <description>Java interface to CEPH</description>
@@ -84,7 +84,7 @@
         <url>https://github.com/dCache/rados4j</url>
         <connection>scm:git:https://github.com/dCache/rados4j.git</connection>
         <developerConnection>scm:git:ssh://git@github.com/dCache/rados4j.git</developerConnection>
-        <tag>rados4j-0.0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
 </project>
