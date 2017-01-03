@@ -4,7 +4,7 @@ A Java binding for librados and librbd (an alternative to https://github.com/cep
 
 Testing
 -------
-The unit tests require a running CEPH instance. A [ceph/demp](https://github.com/ceph/ceph-docker/tree/master/ceph-releases/jewel/ubuntu/14.04/demo)
+The unit tests require a running CEPH instance. A [ceph/demo](https://github.com/ceph/ceph-docker/tree/master/ceph-releases/jewel/ubuntu/14.04/demo)
 docker container is a great way to deploy a test instance. There are three environment variables to point test to your
 installation: **RADOS_TEST_CLUSTER**, **RADOS_TEST_CONF**, **RADOS_TEST_POOL**, with
 **admin**, **/etc/ceph/ceph.conf** and **test-pool** as default values.
