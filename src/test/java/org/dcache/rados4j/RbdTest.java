@@ -130,9 +130,10 @@ public class RbdTest {
                 ByteBuffer b = ByteBuffer.allocateDirect(bufSize / 2);
                 b.limit(b.capacity());
                 image.read(b, i * bufSize / 2);
+                // Reset the position to compute the right digest. 
+                b.flip();
                 mdOut.update(b);
             }
-
             assertArrayEquals(mdIn.digest(), mdOut.digest());
         }
 
