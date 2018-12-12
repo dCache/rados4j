@@ -57,7 +57,7 @@ public class RbdImage implements AutoCloseable {
     public RbdImageInfo stat() throws RadosException {
         RbdImageInfo info = new RbdImageInfo(runtime);
         int rc = rbd.rbd_stat(image, info, 0);
-        checkError(runtime, rc, "Failed to stat imoge " + name);
+        checkError(runtime, rc, "Failed to stat image " + name);
         return info;
     }
 }
