@@ -123,5 +123,6 @@ public class Rbd {
         int rbd_stat(@In Pointer image, @Out RbdImageInfo info, long size);
         int rbd_resize(@In Pointer image, long size);
         int rbd_list(@In Pointer ctx, @In @Out byte[] names, @In @Out LongLongByReference size);
+        int rbd_flush(@In Pointer image);
     }
 }

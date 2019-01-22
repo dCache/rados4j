@@ -60,4 +60,9 @@ public class RbdImage implements AutoCloseable {
         checkError(runtime, rc, "Failed to stat image " + name);
         return info;
     }
+
+    public void flush() throws RadosException {
+        int rc = rbd.rbd_flush(image);
+        checkError(runtime, rc, "Failed to flush image " + name);
+    }
 }
