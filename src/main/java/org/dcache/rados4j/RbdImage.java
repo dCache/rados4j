@@ -34,10 +34,10 @@ public class RbdImage implements AutoCloseable {
     }
 
     public int write(ByteBuffer buf, long offset) throws RadosException {
-        int rc = rbd.rbd_write(image, offset, buf.remaining(), buf);
+        int rc = rbd.rbd_write(image, offset, buf.remaining(), buf.slice());
         checkError(runtime, rc, "Failed to write into image " + name);
         // JNI interface does not updates the position
-        buf.position( buf.position() + rc);
+        buf.position(buf.position() + rc);
         return rc;
     }
 

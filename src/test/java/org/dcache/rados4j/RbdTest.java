@@ -141,6 +141,40 @@ public class RbdTest {
     }
 
     @Test
+    public void testPartialWriteReadImage() throws RadosException, NoSuchAlgorithmException {
+        rbd.create("test-image", 0);
+        try (RbdImage image = rbd.open("test-image")) {
+
+            ByteBuffer bufferIn = ByteBuffer.wrap("1234567890".getBytes());
+            MessageDigest mdIn = MessageDigest.getInstance("SHA1");
+            mdIn.update(bufferIn);
+            byte[] digestIn = mdIn.digest();
+
+            long fileSize = bufferIn.limit();
+            image.resize((int) fileSize);
+            for (int offset = 0; offset < fileSize; offset++) {
+                // Write the image with offset and position
+                bufferIn.position(offset);
+                int numOfBytesWritten = image.write(bufferIn, offset);
+                // System.out.println("number of bytes written : " + numOfBytesWritten);
+
+                // Read back the image
+                ByteBuffer bufferOut = ByteBuffer.allocate((int) fileSize);
+                bufferOut.position(0);
+                int numOfBytesRead = image.read(bufferOut, 0);
+                // System.out.println("number of bytes read : " + numOfBytesRead);
+
+                MessageDigest mdOut = MessageDigest.getInstance("SHA1");
+                bufferOut.flip();
+                mdOut.update(bufferOut);
+
+                assertArrayEquals(digestIn, mdOut.digest());
+            }
+        }
+        rbd.remove("test-image");
+    }
+
+    @Test
     public void testListImages() throws RadosException {
         rbd.create("test-image1", 0);
         rbd.create("test-image2", 0);
