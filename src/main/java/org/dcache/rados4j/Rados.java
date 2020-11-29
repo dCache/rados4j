@@ -13,7 +13,7 @@ import static org.dcache.rados4j.Error.checkError;
 
 public class Rados {
 
-    private final Logger LOG = LoggerFactory.getLogger(Rados.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Rados.class);
 
     private final LibRados libRados;
     private final jnr.ffi.Runtime runtime;

@@ -20,7 +20,7 @@ import static org.dcache.rados4j.Error.checkError;
 
 public class Rbd {
 
-    private final Logger LOG = LoggerFactory.getLogger(Rbd.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Rbd.class);
 
     private final LibRbd libRbd;
     private final jnr.ffi.Runtime runtime;
